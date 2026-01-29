@@ -115,6 +115,7 @@ class MainWindow(QWidget):
 
         self.audio_only_cb.stateChanged.connect(self.on_mode_changed)
         self.video_only_cb.stateChanged.connect(self.on_mode_changed)
+        self.video_only_cb.hide()
 
         self.download_btn = QPushButton("Download")
         self.download_btn.clicked.connect(self.start_download)

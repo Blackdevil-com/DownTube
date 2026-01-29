@@ -12,7 +12,7 @@ def download_youtube(url, resolution, progress_callback, control_flag, folder, a
             raise Exception("Download paused")
 
         if d["status"] == "downloading":
-            tmp = d.get("tmpfilename")  # ✅ REAL temp file
+            tmp = d.get("tmpfilename")
             if tmp:
                 temp_files.add(tmp)
 
@@ -30,9 +30,16 @@ def download_youtube(url, resolution, progress_callback, control_flag, folder, a
         "restrictfilenames": True,
         "continuedl": True,
         "nopart": False,
-        }
 
+        # 🔥 CRITICAL FIX
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["android"]
+            }
+        },
+    }
 
+    # 🎵 AUDIO ONLY
     if audio_only:
         ydl_opts.update({
             "format": "bestaudio/best",
@@ -43,23 +50,30 @@ def download_youtube(url, resolution, progress_callback, control_flag, folder, a
             }],
         })
 
+    # 🎥 VIDEO ONLY (MP4 preferred, fallback allowed)
     elif video_only:
         ydl_opts.update({
-            "format": f"bestvideo[height={resolution}]/best",
-            "merge_output_format": "mp4",
+            "format": (
+                f"bestvideo[ext=mp4][height<={resolution}]/"
+                f"bestvideo[height<={resolution}]/bestvideo"
+            ),
             "postprocessors": [{
-            "key": "FFmpegVideoConvertor",
-            "preferedformat": "mp4",
-            }]
+                "key": "FFmpegVideoConvertor",
+                "preferedformat": "mp4",
+            }],
         })
 
+    # 🎬 VIDEO + AUDIO
     else:
         ydl_opts.update({
-            "format": f"bestvideo[height={resolution}]+bestaudio/best",
+            "format": (
+                f"bestvideo[ext=mp4][height<={resolution}]+bestaudio[ext=m4a]/"
+                f"bestvideo[height<={resolution}]+bestaudio/best"
+            ),
             "merge_output_format": "mp4",
             "postprocessor_args": ["-c:a", "aac"],
         })
-    
+
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
@@ -73,5 +87,10 @@ def download_youtube(url, resolution, progress_callback, control_flag, folder, a
                 except Exception:
                     pass
             raise Exception("Download cancelled")
+        if "requested format is not available" in str(e).lower():
+            raise Exception(
+                "Selected quality is not available in MP4.\n"
+                "Try a lower resolution or allow WebM."
+        )
 
         raise
