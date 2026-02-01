@@ -1,6 +1,6 @@
 [Setup]
 AppName=DownTube
-AppVersion=1.0.1
+AppVersion=1.0.2
 DefaultDirName={pf}\DownTube
 DefaultGroupName=DownTube
 OutputDir=installer
@@ -10,7 +10,7 @@ SolidCompression=yes
 SetupIconFile=src\icon.ico
 
 [Files]
-Source: "src\dist\DownTube.exe"; DestDir: "{app}"; DestName: "DownTube.exe"; Flags: ignoreversion
+Source: "dist\DownTube.exe"; DestDir: "{app}"; DestName: "DownTube.exe"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\DownTube"; Filename: "{app}\DownTube.exe"

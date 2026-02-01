@@ -32,11 +32,11 @@ def download_youtube(url, resolution, progress_callback, control_flag, folder, a
         "nopart": False,
 
         # 🔥 CRITICAL FIX
-        "extractor_args": {
-            "youtube": {
-                "player_client": ["android"]
-            }
-        },
+        # "extractor_args": {
+        #     "youtube": {
+        #         "player_client": ["android"]
+        #     }
+        # },
     }
 
     # 🎵 AUDIO ONLY
@@ -55,7 +55,6 @@ def download_youtube(url, resolution, progress_callback, control_flag, folder, a
         ydl_opts.update({
             "format": (
                 f"bestvideo[ext=mp4][height<={resolution}]/"
-                f"bestvideo[height<={resolution}]/bestvideo"
             ),
             "postprocessors": [{
                 "key": "FFmpegVideoConvertor",
@@ -68,7 +67,6 @@ def download_youtube(url, resolution, progress_callback, control_flag, folder, a
         ydl_opts.update({
             "format": (
                 f"bestvideo[ext=mp4][height<={resolution}]+bestaudio[ext=m4a]/"
-                f"bestvideo[height<={resolution}]+bestaudio/best"
             ),
             "merge_output_format": "mp4",
             "postprocessor_args": ["-c:a", "aac"],
@@ -90,7 +88,7 @@ def download_youtube(url, resolution, progress_callback, control_flag, folder, a
         if "requested format is not available" in str(e).lower():
             raise Exception(
                 "Selected quality is not available in MP4.\n"
-                "Try a lower resolution or allow WebM."
+                "Or check for new version"
         )
 
         raise
